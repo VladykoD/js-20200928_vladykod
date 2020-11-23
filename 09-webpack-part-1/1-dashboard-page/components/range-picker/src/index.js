@@ -65,7 +65,6 @@ export default class RangePicker {
     const {input, selector} = this.subElements;
 
     document.addEventListener('click', this.onDocumentClick, true);
-
     input.addEventListener('click', () => this.toggle());
     selector.addEventListener('click', event => this.onSelectorClick(event));
   }

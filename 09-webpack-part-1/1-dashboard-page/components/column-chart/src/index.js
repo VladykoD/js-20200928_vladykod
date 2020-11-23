@@ -1,4 +1,4 @@
-import fetchJson from './utils/fetch-json.js';
+import fetchJson from '../../../utils/fetch-json.js';
 
 const BACKEND_URL = 'https://course-js.javascript.ru';
 
@@ -8,33 +8,34 @@ export default class ColumnChart {
   chartHeight = 50;
 
   constructor({
-                label = '',
-                link = '',
-                formatHeading = data => data,
-                url = '',
-                range = {
-                  from: new Date(),
-                  to: new Date(),
-                }
-              } = {}) {
+    label = '',
+    link = '',
+    formatHeading = data => data,
+    url = '',
+    range = {
+      from: new Date(),
+      to: new Date(),
+    }
+  } = {}) {
     this.url = new URL(url, BACKEND_URL);
-
     this.range = range;
     this.label = label;
     this.link = link;
     this.formatHeading = formatHeading;
 
     this.render();
-    this.loadData(this.range.from, this.range.to);
   }
 
   render() {
+    const { from, to } = this.range;
     const element = document.createElement('div');
 
     element.innerHTML = this.template;
 
     this.element = element.firstElementChild;
     this.subElements = this.getSubElements(this.element);
+
+    this.loadData(from, to);
   }
 
   getHeaderValue(data) {
@@ -46,7 +47,7 @@ export default class ColumnChart {
     this.subElements.header.textContent = '';
     this.subElements.body.innerHTML = '';
 
-    this.url.searchParams.set('from', from.toISOString()); // url = https://google.com + ?from=decodeURIComponent(...)
+    this.url.searchParams.set('from', from.toISOString());
     this.url.searchParams.set('to', to.toISOString());
 
     const data = await fetchJson(this.url);

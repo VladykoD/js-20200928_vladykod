@@ -1,4 +1,4 @@
-import fetchJson from './utils/fetch-json.js';
+import fetchJson from '../../../utils/fetch-json.js';
 
 const BACKEND_URL = 'https://course-js.javascript.ru';
 
@@ -11,18 +11,17 @@ export default class SortableTable {
   start = 1;
   end = this.start + this.step;
 
-  onWindowScroll = async () => {
+  onWindowScroll = async() => {
     const { bottom } = this.element.getBoundingClientRect();
     const { id, order } = this.sorted;
 
-    if (bottom < document.documentElement.clientHeight && !this.loading && !this.isSortLocally) {
+    if (bottom < document.documentElement.clientHeight && !this.loading && !this.sortLocally) {
       this.start = this.end;
       this.end = this.start + this.step;
 
       this.loading = true;
 
       const data = await this.loadData(id, order, this.start, this.end);
-
       this.update(data);
 
       this.loading = false;
@@ -108,7 +107,7 @@ export default class SortableTable {
 
     this.element.classList.add('sortable-table_loading');
 
-    const data = await fetchJson(this.url);
+    const data = await fetchJson(this.url.toString());
 
     this.element.classList.remove('sortable-table_loading');
 
@@ -192,7 +191,9 @@ export default class SortableTable {
       <div class="sortable-table">
         ${this.getTableHeader()}
         ${this.getTableBody(this.data)}
+
         <div data-element="loading" class="loading-line sortable-table__loading-line"></div>
+
         <div data-element="emptyPlaceholder" class="sortable-table__empty-placeholder">
           No products
         </div>
@@ -233,14 +234,14 @@ export default class SortableTable {
 
     return arr.sort((a, b) => {
       switch (sortType) {
-        case 'number':
-          return direction * (a[id] - b[id]);
-        case 'string':
-          return direction * a[id].localeCompare(b[id], 'ru');
-        case 'custom':
-          return direction * customSorting(a, b);
-        default:
-          return direction * (a[id] - b[id]);
+      case 'number':
+        return direction * (a[id] - b[id]);
+      case 'string':
+        return direction * a[id].localeCompare(b[id], 'ru');
+      case 'custom':
+        return direction * customSorting(a, b);
+      default:
+        return direction * (a[id] - b[id]);
       }
     });
   }
